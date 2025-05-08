@@ -1,8 +1,10 @@
-package br.com.alura.AluraFake.task;
-
+package br.com.alura.AluraFake.task.dto;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
-public class NewOpenTextTaskDTO {
+import java.util.List;
+
+public class NewSingleChoiceTaskDTO {
 
     @NotNull
     private Long courseId;
@@ -15,15 +17,9 @@ public class NewOpenTextTaskDTO {
     @Min(1)
     private Integer order;
 
-    @Deprecated
-    public NewOpenTextTaskDTO() {
-    }
-
-    public NewOpenTextTaskDTO(Long courseId, String statement, Integer order) {
-        this.courseId = courseId;
-        this.statement = statement;
-        this.order = order;
-    }
+    @Size(min = 2, max = 5)
+    @NotNull
+    private List<@Valid SingleChoiceOptionDTO> options;
 
     public Long getCourseId() {
         return courseId;
@@ -35,5 +31,9 @@ public class NewOpenTextTaskDTO {
 
     public Integer getOrder() {
         return order;
+    }
+
+    public List<SingleChoiceOptionDTO> getOptions() {
+        return options;
     }
 }

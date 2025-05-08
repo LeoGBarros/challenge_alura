@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.model;
 
 import br.com.alura.AluraFake.course.Course;
 import jakarta.persistence.DiscriminatorValue;

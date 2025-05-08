@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.model;
 
 import br.com.alura.AluraFake.course.Course;
 import jakarta.persistence.*;
@@ -20,6 +20,7 @@ public abstract class Task {
     private String statement;
 
     @NotNull
+    @Column(name = "order_index")
     private Integer orderIndex;
 
     @ManyToOne(fetch = FetchType.LAZY)
