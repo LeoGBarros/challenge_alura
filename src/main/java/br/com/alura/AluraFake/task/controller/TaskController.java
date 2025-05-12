@@ -2,10 +2,14 @@ package br.com.alura.AluraFake.task.controller;
 
 import br.com.alura.AluraFake.task.dto.NewOpenTextTaskDTO;
 import br.com.alura.AluraFake.task.dto.NewSingleChoiceTaskDTO;
+import br.com.alura.AluraFake.task.model.Task;
 import br.com.alura.AluraFake.task.service.TaskService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/task")
@@ -29,10 +33,18 @@ public class TaskController {
     }
 
     @PostMapping("/new/singlechoice")
-    public ResponseEntity<Void> newSingleChoice(@RequestBody @Valid NewSingleChoiceTaskDTO dto) {
-        taskService.createSingleChoiceTask(dto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> newSingleChoice(@RequestBody @Valid NewSingleChoiceTaskDTO dto) {
+        Task task = taskService.createSingleChoiceTask(dto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(Map.of(
+                        "id", task.getId(),
+                        "statement", task.getStatement(),
+                        "order", task.getOrderIndex(),
+                        "message", "Atividade criada com sucesso!"
+                ));
     }
+
 
 }
 

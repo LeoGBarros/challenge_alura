@@ -11,6 +11,10 @@ public class SingleChoiceTask extends Task {
 
     @ElementCollection
     @CollectionTable(name = "single_choice_options", joinColumns = @JoinColumn(name = "task_id"))
+    @AttributeOverrides({
+            @AttributeOverride(name = "option", column = @Column(name = "option_text")),
+            @AttributeOverride(name = "isCorrect", column = @Column(name = "is_correct"))
+    })
     private List<SingleChoiceOption> options;
 
     @Deprecated
