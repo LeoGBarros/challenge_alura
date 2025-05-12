@@ -22,18 +22,26 @@ public class TaskController {
     }
 
     @PostMapping("/new/opentext")
-    public ResponseEntity<Void> newOpenTextExercise(@RequestBody @Valid NewOpenTextTaskDTO dto) {
-        taskService.createOpenTextTask(dto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Map<String, Object>> createOpenTextTask(@RequestBody @Valid NewOpenTextTaskDTO dto) {
+        Task task = taskService.createOpenTextTask(dto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(Map.of(
+                        "id", task.getId(),
+                        "statement", task.getStatement(),
+                        "order", task.getOrderIndex(),
+                        "message", "Task successfully created!"
+                ));
     }
 
+
     @PostMapping("/new/multiplechoice")
-    public ResponseEntity<Void> newMultipleChoice() {
+    public ResponseEntity<Void> createMultipleChoiceTask() {
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/new/singlechoice")
-    public ResponseEntity<?> newSingleChoice(@RequestBody @Valid NewSingleChoiceTaskDTO dto) {
+    public ResponseEntity<?> createSingleChoiceTask(@RequestBody @Valid NewSingleChoiceTaskDTO dto) {
         Task task = taskService.createSingleChoiceTask(dto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -41,10 +49,7 @@ public class TaskController {
                         "id", task.getId(),
                         "statement", task.getStatement(),
                         "order", task.getOrderIndex(),
-                        "message", "Atividade criada com sucesso!"
+                        "message", "Task successfully created!"
                 ));
     }
-
-
 }
-

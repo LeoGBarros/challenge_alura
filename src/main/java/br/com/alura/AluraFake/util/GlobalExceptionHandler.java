@@ -27,22 +27,22 @@ public class GlobalExceptionHandler {
                     String field;
                     String message;
 
-                    // Tratamento especial para campos das opções
+                    // Special handling for options field
                     if (rawField.matches("options\\[\\d+\\]\\.option")) {
                         int index = Integer.parseInt(rawField.replaceAll("\\D+", "")) + 1;
-                        field = "alternativa " + index;
-                        message = String.format("A alternativa '%s' %s",
-                                rejectedValue != null ? rejectedValue : "(vazio)",
-                                defaultMsg.toLowerCase());
+                        field = "option " + index;
+                        message = String.format("The option '%s' %s",
+                                rejectedValue != null ? rejectedValue : "(empty)",
+                                defaultMsg != null ? defaultMsg.toLowerCase() : "");
                     } else {
                         field = switch (rawField) {
-                            case "statement" -> "enunciado";
-                            case "order" -> "ordem";
-                            case "courseId" -> "curso";
-                            case "options" -> "alternativas";
+                            case "statement" -> "statement";
+                            case "order" -> "order";
+                            case "courseId" -> "course";
+                            case "options" -> "options";
                             default -> rawField;
                         };
-                        message = defaultMsg;
+                        message = defaultMsg != null ? defaultMsg : "Invalid value";
                     }
 
                     return Map.of("field", field, "message", message);
