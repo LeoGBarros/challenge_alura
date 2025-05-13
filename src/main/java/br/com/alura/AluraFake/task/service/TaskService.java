@@ -115,4 +115,62 @@ public class TaskService {
             }
         }
     }
+
+    @Transactional
+    public Task createMultipleChoiceTask(NewMultipleChoiceTaskDTO dto) {
+        Course course = findAndValidateCourse(dto.getCourseId());
+        validateStatementUniqueness(course, dto.getStatement());
+
+        List<SingleChoiceOptionDTO> options = dto.getOptions();
+        validateMultipleChoiceOptions(dto.getStatement(), options);
+
+        List<Task> tasks = taskRepository.findByCourseOrderByOrderIndex(course);
+        validateOrder(dto.getOrder(), tasks);
+        shiftTaskOrder(tasks, dto.getOrder());
+        taskRepository.saveAll(tasks);
+
+        List<SingleChoiceOption> mappedOptions = options.stream()
+                .map(opt -> new SingleChoiceOption(opt.getOption(), opt.getIsCorrect()))
+                .toList();
+
+        Task newTask = new MultipleChoiceTask(dto.getStatement(), dto.getOrder(), course, mappedOptions);
+        return taskRepository.save(newTask);
+    }
+
+    private void validateMultipleChoiceOptions(String statement, List<SingleChoiceOptionDTO> options) {
+        if (options.size() < 3 || options.size() > 5) {
+            throw new IllegalArgumentException("You must provide between 3 and 5 options.");
+        }
+
+        long correctCount = options.stream().filter(SingleChoiceOptionDTO::getIsCorrect).count();
+        long incorrectCount = options.size() - correctCount;
+
+        if (correctCount < 2) {
+            throw new IllegalArgumentException("You must provide at least 2 correct options.");
+        }
+
+        if (incorrectCount < 1) {
+            throw new IllegalArgumentException("You must provide at least 1 incorrect option.");
+        }
+
+        Set<String> uniqueTexts = new HashSet<>();
+        String normalizedStatement = statement.trim().toLowerCase();
+
+        for (SingleChoiceOptionDTO opt : options) {
+            String text = opt.getOption().trim();
+
+            if (text.length() < 4 || text.length() > 80) {
+                throw new IllegalArgumentException("Each option must be between 4 and 80 characters.");
+            }
+
+            if (!uniqueTexts.add(text.toLowerCase())) {
+                throw new IllegalArgumentException("Options must be unique.");
+            }
+
+            if (text.equalsIgnoreCase(normalizedStatement)) {
+                throw new IllegalArgumentException("Options must not match the statement.");
+            }
+        }
+    }
+
 }
